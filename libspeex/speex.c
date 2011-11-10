@@ -47,7 +47,6 @@
 #define MAX_IN_SAMPLES 640
 
 
-
 EXPORT void *speex_encoder_init(const SpeexMode *mode)
 {
    return mode->enc_init(mode);
@@ -218,36 +217,3 @@ int nb_mode_query(const void *mode, int request, void *ptr)
 
 
 
-EXPORT int speex_lib_ctl(int request, void *ptr)
-{
-   switch (request)
-   {
-      case SPEEX_LIB_GET_MAJOR_VERSION:
-         *((int*)ptr) = SPEEX_MAJOR_VERSION;
-         break;
-      case SPEEX_LIB_GET_MINOR_VERSION:
-         *((int*)ptr) = SPEEX_MINOR_VERSION;
-         break;
-      case SPEEX_LIB_GET_MICRO_VERSION:
-         *((int*)ptr) = SPEEX_MICRO_VERSION;
-         break;
-      case SPEEX_LIB_GET_EXTRA_VERSION:
-         *((const char**)ptr) = SPEEX_EXTRA_VERSION;
-         break;
-      case SPEEX_LIB_GET_VERSION_STRING:
-         *((const char**)ptr) = SPEEX_VERSION;
-         break;
-      /*case SPEEX_LIB_SET_ALLOC_FUNC:
-         break;
-      case SPEEX_LIB_GET_ALLOC_FUNC:
-         break;
-      case SPEEX_LIB_SET_FREE_FUNC:
-         break;
-      case SPEEX_LIB_GET_FREE_FUNC:
-         break;*/
-      default:
-         speex_warning_int("Unknown wb_mode_query request: ", request);
-         return -1;
-   }
-   return 0;
-}

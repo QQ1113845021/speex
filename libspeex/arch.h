@@ -52,6 +52,11 @@
 #ifdef _USE_SSE
 #error SSE is only for floating-point
 #endif
+
+#if defined(ARMV7NEON_ASM) && !defined(ARM5E_ASM)
+#define ARM5E_ASM 1
+#endif
+
 #if ((defined (ARM4_ASM)||defined (ARM4_ASM)) && defined(BFIN_ASM)) || (defined (ARM4_ASM)&&defined(ARM5E_ASM))
 #error Make up your mind. What CPU do you have?
 #endif
@@ -64,8 +69,11 @@
 #ifndef FLOATING_POINT
 #error You now need to define either FIXED_POINT or FLOATING_POINT
 #endif
-#if defined (ARM4_ASM) || defined(ARM5E_ASM) || defined(BFIN_ASM)
+#if defined (ARM4_ASM) || defined(ARM5E_ASM) || defined(BFIN_ASM) 
 #error I suppose you can have a [ARM4/ARM5E/Blackfin] that has float instructions?
+#endif
+#ifdef ARMV7NEON_ASM
+#error Neon cannot be used in floating point mode. 
 #endif
 #ifdef FIXED_POINT_DEBUG
 #error "Don't you think enabling fixed-point is a good thing to do if you want to debug that?"
@@ -120,6 +128,10 @@ typedef spx_word32_t spx_sig_t;
 #else
 
 #include "fixed_generic.h"
+
+#ifdef ARMV7NEON_ASM
+#include "fixed_neon.h"
+#endif
 
 #ifdef ARM5E_ASM
 #include "fixed_arm5e.h"

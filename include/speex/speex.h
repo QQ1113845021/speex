@@ -195,6 +195,11 @@ extern "C" {
 /** Get Speex version string */
 #define SPEEX_LIB_GET_VERSION_STRING 9
 
+#define SPEEX_LIB_CPU_FEATURE_NEON 1
+
+/** Sets the cpu features usable by speex library*/
+#define SPEEX_LIB_SET_CPU_FEATURES 10
+
 /*#define SPEEX_LIB_SET_ALLOC_FUNC 10
 #define SPEEX_LIB_GET_ALLOC_FUNC 11
 #define SPEEX_LIB_SET_FREE_FUNC 12

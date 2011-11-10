@@ -13,27 +13,34 @@ AC_ARG_WITH(ogg,[  --with-ogg=PFX   Prefix where libogg is installed (optional)]
 AC_ARG_WITH(ogg-libraries,[  --with-ogg-libraries=DIR   Directory where libogg library is installed (optional)], ogg_libraries="$withval", ogg_libraries="")
 AC_ARG_WITH(ogg-includes,[  --with-ogg-includes=DIR   Directory where libogg header files are installed (optional)], ogg_includes="$withval", ogg_includes="")
 AC_ARG_ENABLE(oggtest, [  --disable-oggtest       Do not try to compile and run a test Ogg program],, enable_oggtest=yes)
+AC_ARG_ENABLE(ogg, [  --disable-ogg       Do not use ogg],, enable_ogg=yes)
 
-  if test "x$ogg_libraries" != "x" ; then
-    OGG_LIBS="-L$ogg_libraries"
-  elif test "x$ogg_prefix" != "x" ; then
-    OGG_LIBS="-L$ogg_prefix/lib"
-  elif test "x$prefix" != "xNONE" ; then
-    OGG_LIBS="-L$prefix/lib"
-  fi
-
-  OGG_LIBS="$OGG_LIBS -logg"
-
-  if test "x$ogg_includes" != "x" ; then
-    OGG_CFLAGS="-I$ogg_includes"
-  elif test "x$ogg_prefix" != "x" ; then
-    OGG_CFLAGS="-I$ogg_prefix/include"
-  elif test "x$prefix" != "xNONE"; then
-    OGG_CFLAGS="-I$prefix/include"
-  fi
-
-  AC_MSG_CHECKING(for Ogg)
   no_ogg=""
+
+  if test "$enable_ogg" = "yes" ; then
+	  if test "x$ogg_libraries" != "x" ; then
+	    OGG_LIBS="-L$ogg_libraries"
+	  elif test "x$ogg_prefix" != "x" ; then
+	    OGG_LIBS="-L$ogg_prefix/lib"
+	  elif test "x$prefix" != "xNONE" ; then
+	    OGG_LIBS="-L$prefix/lib"
+	  fi
+
+	  OGG_LIBS="$OGG_LIBS -logg"
+
+	  if test "x$ogg_includes" != "x" ; then
+	    OGG_CFLAGS="-I$ogg_includes"
+	  elif test "x$ogg_prefix" != "x" ; then
+	    OGG_CFLAGS="-I$ogg_prefix/include"
+	  elif test "x$prefix" != "xNONE"; then
+	    OGG_CFLAGS="-I$prefix/include"
+	  fi
+  else
+	no_ogg=yes
+	enable_oggtest=no
+  fi
+  AC_MSG_CHECKING(for Ogg)
+  
 
 
   if test "x$enable_oggtest" = "xyes" ; then
@@ -69,7 +76,7 @@ int main ()
      AC_MSG_RESULT(no)
      if test -f conf.oggtest ; then
        :
-     else
+     elif test "$enable_ogg" = "yes" ; then
        echo "*** Could not run Ogg test program, checking why..."
        CFLAGS="$CFLAGS $OGG_CFLAGS"
        LIBS="$LIBS $OGG_LIBS"
