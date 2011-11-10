@@ -63,6 +63,12 @@ extern "C" {
 /** Get impulse response (int32[]) */
 #define SPEEX_ECHO_GET_IMPULSE_RESPONSE 29
 
+/** Get the internal echo canceller state for later use. Expected argument is a SpeexEchoStateBlob*/
+#define SPEEX_ECHO_GET_BLOB 30
+
+/** Assign a an internal state. Expected argument is a SpeexEchoStateBlob*/
+#define SPEEX_ECHO_SET_BLOB 31
+
 /** Internal echo canceller state. Should never be accessed directly. */
 struct SpeexEchoState_;
 
@@ -164,6 +170,45 @@ void speex_decorrelate(SpeexDecorrState *st, const spx_int16_t *in, spx_int16_t 
 */
 void speex_decorrelate_destroy(SpeexDecorrState *st);
 
+
+
+/**
+ * Structure to represent the internal state of the echo canceller. This is used to save and restore 
+ * the converged state of the echo canceller beyond process life or accross machine reboots.
+ * The goal behind is for a device that is always in the same acoustic conditions to always start the echo canceller
+ * in a converged state.
+ * To use this feature, proceeed as this:
+ * - use speex_echo_ctl() with SPEEX_ECHO_GET_BLOB to obtain a SpeexEchoStateBlob, at the end of an audio session, when the echo canceller is supposed to be converged.
+ * - save the blob to a disk file for example, using speex_echo_state_blob_get_data() and speex_echo_state_blob_get_size() to retrieve the actual data
+ *
+ * To restore the state later, after a reboot or a process restart, do the following:
+ * - read the data from the file where you previously save the blob's contents
+ * - instanciate a blob object from this data using speex_echo_state_blob_new_from_memory()
+ * - assign the blob to the echo canceller using speex_echo_ctl() with SPEEX_ECHO_SET_BLOB, before the echo canceller starts processing data.
+*/
+typedef struct SpeexEchoStateBlob_ SpeexEchoStateBlob;
+
+/** Create a SpeexEchoStateBlob from memory.
+ * @param data pointer to memory
+ * @param datalen length of the memory segment.
+*/
+SpeexEchoStateBlob * speex_echo_state_blob_new_from_memory(const unsigned char *data, int datalen);
+
+/**
+ * Get a pointer to the memory segment representing the echo canceller internal state.
+ * Use this with speex_echo_state_blob_get_size() to store this memory segment to a file for later use.
+*/
+const unsigned char * speex_echo_state_blob_get_data(SpeexEchoStateBlob *blob);
+
+/**
+ * Get the size of the memory segment representing the echo canceller internal state.
+*/
+int speex_echo_state_blob_get_size(SpeexEchoStateBlob *blob);
+
+/**
+ * Frees the blob.
+*/
+void speex_echo_state_blob_free(SpeexEchoStateBlob *blob);
 
 #ifdef __cplusplus
 }
