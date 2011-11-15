@@ -27,5 +27,5 @@ speexenc_LDADD = $(top_builddir)/libspeex/libspeex.la $(top_builddir)/libspeex/l
 	$(OGG_LIBS)  @FFT_LIBS@	
 
 speexdec_SOURCES = speexdec.c wav_io.c
-speexdec_LDADD = $(top_builddir)/libspeex/libspeex.la $(VPSY_LIB) \
+speexdec_LDADD = $(top_builddir)/libspeex/libspeex.la $(top_builddir)/libspeex/libspeexdsp.la $(VPSY_LIB) \
 	$(OGG_LIBS)  @FFT_LIBS@
