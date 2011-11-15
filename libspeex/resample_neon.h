@@ -39,10 +39,35 @@ extern int libspeex_cpu_features;
 
 #define OVERRIDE_INNER_PRODUCT_SINGLE
 static inline spx_int32_t inner_product_single(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
-	
-#error 		"PEPP, place your asm volatile code to implement scalar product."
-	
-	return 0;
+	spx_int32_t ret;
+
+	__asm  (
+			/* save len */
+			"mov r4, %3  \n\t"
+			/* clear q0 */
+			"vmov.i16 q0, #0 \n\t"
+			/* load 8 values from a in q1*/
+			"1: vld1.16 {d2,d3},[%1]! \n\t"
+			/* load 8 values from b in q2 */
+			"vld1.16 {d4,d5},[%2]! \n\t"
+			/* multiply-add 4 first values into q0 */
+			"vmlal.s16 q0, d2, d4 \n\t"
+			/* multiply-add 4 last into q0 */
+			"vmlal.s16 q0, d3, d5 \n\t"
+			/* decrement len by 8 */
+			"subs r4, r4, #8 \n\t"
+			/* loop if needed */
+            "bne 1b \n\t"
+			/* add individual 32 bits results */
+			"vpadd.s32 d0, d0, d1 \n\t"
+			/* store result in ret  */
+			"vmov.32 %0, d0[0] \n\t"
+			: "=r"(ret), "+r"(a), "+r"(b)/* out */
+			: "r"(len)/*in*/
+			: "q0", "q1", "q2", "r4" /*modified*/
+			);
+
+	return ret;
 }
 
 #define OVERRIDE_INTERPOLATE_PRODUCT_SINGLE
