@@ -41,6 +41,13 @@ extern int libspeex_cpu_features;
 static inline spx_int32_t inner_product_single(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
 
+	if (!(libspeex_cpu_features & SPEEX_LIB_CPU_FEATURE_NEON)) {
+		register int sum = 0;
+		register int j;
+		for(j=0;j<len;j++) sum += MULT16_16(a[j], b[j]);
+		return sum;
+	}
+
 	__asm  (
 			/* save len */
 			"mov r4, %3  \n\t"
