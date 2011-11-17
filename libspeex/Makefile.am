@@ -49,11 +49,11 @@ libspeexdsp_la_LDFLAGS = -no-undefined -version-info @SPEEX_LT_CURRENT@:@SPEEX_L
 
 noinst_PROGRAMS = testenc testenc_wb testenc_uwb testdenoise testecho testjitter
 testenc_SOURCES = testenc.c
-testenc_LDADD = libspeex.la $(VPSY_LIB)
+testenc_LDADD = libspeex.la libspeexdsp.la $(VPSY_LIB)
 testenc_wb_SOURCES = testenc_wb.c
-testenc_wb_LDADD = libspeex.la  $(VPSY_LIB)
+testenc_wb_LDADD = libspeex.la  libspeexdsp.la $(VPSY_LIB)
 testenc_uwb_SOURCES = testenc_uwb.c
-testenc_uwb_LDADD = libspeex.la $(VPSY_LIB)
+testenc_uwb_LDADD = libspeex.la libspeexdsp.la $(VPSY_LIB)
 testdenoise_SOURCES = testdenoise.c
 testdenoise_LDADD = libspeexdsp.la @FFT_LIBS@
 testecho_SOURCES = testecho.c

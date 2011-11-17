@@ -129,6 +129,11 @@ void vq_nbest_sign(spx_word16_t *in, const spx_word16_t *codebook, int len, int 
 #else
       dist = ADD32(dist,.5f*E[i]);
 #endif
+       
+       if (entries > 200) {
+           spx_word32_t* p = 0;
+           *p = 12;
+       }
       if (i<N || dist<best_dist[N-1])
       {
          for (k=N-1; (k >= 1) && (k > used || dist < best_dist[k-1]); k--)

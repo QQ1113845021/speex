@@ -265,6 +265,7 @@ static inline int _MULT16_16(int a, int b, char *file, int line)
    return res;
 }
 
+#error MAC16
 #define MAC16_16(c,a,b)     (spx_mips--,ADD32((c),MULT16_16((a),(b))))
 #define MAC16_16_Q11(c,a,b)     (EXTRACT16(ADD16((c),EXTRACT16(SHR32(MULT16_16((a),(b)),11)))))
 #define MAC16_16_Q13(c,a,b)     (EXTRACT16(ADD16((c),EXTRACT16(SHR32(MULT16_16((a),(b)),13)))))

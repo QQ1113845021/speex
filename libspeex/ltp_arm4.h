@@ -32,6 +32,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef OVERRIDE_INNER_PROD
 #define OVERRIDE_INNER_PROD
 spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
 {
@@ -41,8 +42,7 @@ spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
    __asm__ __volatile__ (
          "\tldrsh %5, [%0], #2 \n"
          "\tldrsh %6, [%1], #2 \n"
-         ".inner_prod_loop%=:\n"
-         "\tsub %7, %7, %7\n"
+         "\t1:sub %7, %7, %7\n"
          "\tsub %10, %10, %10\n"
 
          "\tldrsh %8, [%0], #2 \n"
@@ -74,7 +74,7 @@ spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
          "\tsubs %4, %4, #1\n"
          "\tadd %2, %2, %7, asr #5\n"
          "\tadd %3, %3, %10, asr #5\n"
-         "\tbne .inner_prod_loop%=\n"
+         "\tbne 1b\n"
    : "=r" (deadx), "=r" (deady), "+r" (sum1),  "+r" (sum2),
      "=r" (deadlen), "=r" (dead1), "=r" (dead2), "=r" (dead3),
      "=r" (dead4), "=r" (dead5), "=r" (dead6)
@@ -83,6 +83,7 @@ spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
                         );
    return (sum1+sum2)>>1;
 }
+#endif
 
 #define OVERRIDE_PITCH_XCORR
 void pitch_xcorr(const spx_word16_t *_x, const spx_word16_t *_y, spx_word32_t *corr, int len, int nb_pitch, char *stack)
