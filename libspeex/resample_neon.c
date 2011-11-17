@@ -33,7 +33,6 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifdef __ARM_NEON__
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -46,10 +45,12 @@
 #endif
 #include "arch.h"
 
+
+#ifdef __ARM_NEON__
 #include <arm_neon.h>
 
 
-inline spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
 
 	__asm  (
@@ -61,17 +62,17 @@ inline spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int
 			"1: vld1.16 {d2,d3},[%1]! \n\t"
 			/* load 8 values from b in q2 */
 			"vld1.16 {d4,d5},[%2]! \n\t"
-			/* multiply-add 4 first values into q0 */
+			/* multiply-add 4 first values (16b) into q0 (32b)*/
 			"vmlal.s16 q0, d2, d4 \n\t"
-			/* multiply-add 4 last into q0 */
+			/* multiply-add 4 last values (16b) into q0 (32b) */
 			"vmlal.s16 q0, d3, d5 \n\t"
 			/* decrement len by 8 */
 			"subs r4, r4, #8 \n\t"
 			/* loop if needed */
             "bne 1b \n\t"
-			/* add individual 32 bits results */
+			/* add individual 32b results, store in 64b*/
 			"vpadd.s32 d0, d0, d1 \n\t"
-			/* store result in ret  */
+			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
 			: "=r"(ret), "+r"(a), "+r"(b)/* out */
 			: "r"(len)/*in*/
@@ -81,7 +82,42 @@ inline spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int
 	return ret;
 }
 
-inline spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac){
+/* same version with normalization at the end */
+spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+	spx_int32_t ret;
+
+	__asm  (
+			/* save len */
+			"mov r4, %3  \n\t"
+			/* clear q0 */
+			"vmov.i16 q0, #0 \n\t"
+			/* load 8 values from a in q1*/
+			"1: vld1.16 {d2,d3},[%1]! \n\t"
+			/* load 8 values from b in q2 */
+			"vld1.16 {d4,d5},[%2]! \n\t"
+			/* multiply-add 4 first values (16b) into q0 (32b)*/
+			"vmlal.s16 q0, d2, d4 \n\t"
+			/* multiply-add 4 last values (16b) into q0 (32b) */
+			"vmlal.s16 q0, d3, d5 \n\t"
+			/* decrement len by 8 */
+			"subs r4, r4, #8 \n\t"
+			/* loop if needed */
+            "bne 1b \n\t"
+			/* add individual 32b results, store in 64b*/
+			"vpadd.s32 d0, d0, d1 \n\t"
+			/* right shit >> 6 */
+			"vshr.s64 q0, q0, #6 \n\t"
+			/* store result in ret as 32b */
+			"vmov.32 %0, d0[0] \n\t"
+			: "=r"(ret), "+r"(a), "+r"(b)/* out */
+			: "r"(len)/*in*/
+			: "q0", "q1", "q2", "r4" /*modified*/
+			);
+
+	return ret;
+}
+
+spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac){
 	int i,j;
 	int32x4_t sum = vdupq_n_s32 (0);
 	int16x4_t f=vld1_s16 ((const int16_t*)frac);
@@ -103,10 +139,10 @@ inline spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const s
 	return vget_lane_s32 (tmp,0);
 }
 #else
-inline spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	return -1;
 }
-inline spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac) {
+spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac) {
 	return -1;
 }
 #endif

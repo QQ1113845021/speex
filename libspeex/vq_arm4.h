@@ -48,8 +48,7 @@ void vq_nbest(spx_word16_t *in, const spx_word16_t *codebook, int len, int entri
             "mov %3, #0 \n\t"
             "mov %10, %4 \n\t"
             "add %4, %4, %4\n\t"
-            ".vqloop%=:\n\t"
-            "ldrsh %7, [%5], #2 \n\t"
+            "1:ldrsh %7, [%5], #2 \n\t"
             "ldrsh %8, [%6] \n\t"
             "mov %9, %6 \n\t"
             "mla %0, %7, %8, %0 \n\t"
@@ -61,7 +60,7 @@ void vq_nbest(spx_word16_t *in, const spx_word16_t *codebook, int len, int entri
             "mla %3, %7, %8, %3 \n\t"
             "subs %10, %10, #1 \n\t"
             "add %6, %6, #2 \n\t"
-            "bne .vqloop%="
+            "bne 1b\n\t"
          : "=r" (dist1), "=r" (dist2), "=r" (dist3), "=r" (dist4),
       "=r" (dead1), "=r" (dead2), "=r" (codebook), "=r" (dead4),
       "=r" (dead5), "=r" (dead6), "=r" (dead7)
