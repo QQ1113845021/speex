@@ -47,6 +47,7 @@ static inline spx_word32_t MULT16_16(spx_word16_t x, spx_word16_t y) {
 #undef MAC16_16
 static inline spx_word32_t MAC16_16(spx_word32_t a, spx_word16_t x, spx_word32_t y) {
   int res;
+//#error MAC1616
   asm ("smlabb  %0,%1,%2,%3;\n"
               : "=&r"(res)
                : "%r"(x),"r"(y),"r"(a));

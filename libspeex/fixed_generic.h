@@ -70,6 +70,7 @@
 /* (spx_word32_t)(spx_word16_t) gives TI compiler a hint that it's 16x16->32 multiply */
 #define MULT16_16(a,b)     (((spx_word32_t)(spx_word16_t)(a))*((spx_word32_t)(spx_word16_t)(b)))
 
+//#error MAC16
 #define MAC16_16(c,a,b) (ADD32((c),MULT16_16((a),(b))))
 #define MULT16_32_Q12(a,b) ADD32(MULT16_16((a),SHR((b),12)), SHR(MULT16_16((a),((b)&0x00000fff)),12))
 #define MULT16_32_Q13(a,b) ADD32(MULT16_16((a),SHR((b),13)), SHR(MULT16_16((a),((b)&0x00001fff)),13))

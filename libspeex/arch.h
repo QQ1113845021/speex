@@ -54,7 +54,7 @@
 #endif
 
 #if defined(ARMV7NEON_ASM) && !defined(ARM5E_ASM)
-#define ARM5E_ASM 1
+//#define ARM5E_ASM 1
 #endif
 
 #if ((defined (ARM4_ASM)||defined (ARM4_ASM)) && defined(BFIN_ASM)) || (defined (ARM4_ASM)&&defined(ARM5E_ASM))
@@ -134,7 +134,7 @@ typedef spx_word32_t spx_sig_t;
 #endif
 
 #ifdef ARM5E_ASM
-#include "fixed_arm5e.h"
+//#include "fixed_arm5e.h"
 #elif defined (ARM4_ASM)
 #include "fixed_arm4.h"
 #elif defined (BFIN_ASM)
@@ -195,6 +195,7 @@ typedef float spx_word32_t;
 #define SUB32(a,b) ((a)-(b))
 #define MULT16_16_16(a,b)     ((a)*(b))
 #define MULT16_16(a,b)     ((spx_word32_t)(a)*(spx_word32_t)(b))
+#error MAC16_16 DEFINITION
 #define MAC16_16(c,a,b)     ((c)+(spx_word32_t)(a)*(spx_word32_t)(b))
 
 #define MULT16_32_Q11(a,b)     ((a)*(b))

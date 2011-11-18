@@ -188,7 +188,7 @@ fi])
 AC_ARG_ENABLE(armv7neon-asm, [  --enable-armv7neon-asm      Make use of ARMV7a NEON assembly optimizations],
 [if test "$enableval" = yes; then
   AC_DEFINE([ARMV7NEON_ASM], , [Make use of ARM5E assembly optimizations])
-  CFLAGS="$CFLAGS -mfloat-abi=softfp -mfpu=neon -marm"
+  CFLAGS="$CFLAGS -marm -DSHORTCUTS"
 fi])
 
 AC_ARG_ENABLE(blackfin-asm, [  --enable-blackfin-asm   Make use of Blackfin assembly optimizations],

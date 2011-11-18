@@ -52,7 +52,7 @@
 #ifndef DISABLE_ENCODER
 
 #ifndef OVERRIDE_COMPUTE_WEIGHTED_CODEBOOK
-static void compute_weighted_codebook(const signed char *shape_cb, const spx_word16_t *r, spx_word16_t *resp, spx_word16_t *resp2, spx_word32_t *E, int shape_cb_size, int subvect_size, char *stack)
+void compute_weighted_codebook(const signed char *shape_cb, const spx_word16_t *r, spx_word16_t *resp, spx_word16_t *resp2, spx_word32_t *E, int shape_cb_size, int subvect_size, char *stack)
 {
    int i, j, k;
    VARDECL(spx_word16_t *shape);

@@ -50,7 +50,7 @@
 
 #ifdef _USE_SSE
 #include "ltp_sse.h"
-#elif defined(ARMV7NEON_ASM)
+#elif 1 // defined(ARMV7NEON_ASM)
 #include "resample_neon.h"
 #elif defined (ARM4_ASM) || defined(ARM5E_ASM)
 /* warning: crash on ios platform - explicit register saving/restore may help ? */
@@ -61,6 +61,9 @@
 
 #ifndef OVERRIDE_INNER_PROD
 spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
+#else
+spx_word32_t inner_prod_ref(const spx_word16_t *x, const spx_word16_t *y, int len)
+#endif
 {
    spx_word32_t sum=0;
    len >>= 2;
@@ -76,7 +79,6 @@ spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
    }
    return sum;
 }
-#endif
 
 #ifndef DISABLE_ENCODER
 
@@ -235,6 +237,12 @@ void open_loop_nbest_pitch(spx_word16_t *sw, int start, int end, int len, int *p
 #endif
    energy[0]=inner_prod(sw-start, sw-start, len);
    e0=inner_prod(sw, sw, len);
+{
+/*spx_word32_t ref = inner_prod_ref(sw-start, sw-start, len);
+if (ref != energy[0]) {
+	energy[0] = ref;
+}*/
+}
    for (i=start;i<end;i++)
    {
       /* Update energy for next pitch*/

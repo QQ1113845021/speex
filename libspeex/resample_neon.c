@@ -52,7 +52,8 @@
 
 spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
-
+    const spx_int16_t* save_a = a;
+    const spx_int16_t* save_b = b;
 	__asm  (
 			/* save len */
 			"mov r4, %3  \n\t"
@@ -71,20 +72,24 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
 			/* loop if needed */
             "bne 1b \n\t"
 			/* add individual 32b results, store in 64b*/
-			"vpadd.s32 d0, d0, d1 \n\t"
+			"vpaddl.s32 q0, q0\n\t"
+            "vqadd.s64 d0, d0, d1 \n\t"
 			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
 			: "=r"(ret), "+r"(a), "+r"(b)/* out */
 			: "r"(len)/*in*/
 			: "q0", "q1", "q2", "r4" /*modified*/
 			);
-
+    a = save_a;
+    b = save_b;
 	return ret;
 }
 
 /* same version with normalization at the end */
 spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
+    const spx_int16_t* save_a = a;
+    const spx_int16_t* save_b = b;
 
 	__asm  (
 			/* save len */
@@ -104,16 +109,18 @@ spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsig
 			/* loop if needed */
             "bne 1b \n\t"
 			/* add individual 32b results, store in 64b*/
-			"vpadd.s32 d0, d0, d1 \n\t"
+			"vpaddl.s32 q0, q0\n\t"
 			/* right shit >> 6 */
 			"vshr.s64 q0, q0, #6 \n\t"
+            "vqadd.s64 d0, d0, d1 \n\t"
 			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
 			: "=r"(ret), "+r"(a), "+r"(b)/* out */
 			: "r"(len)/*in*/
 			: "q0", "q1", "q2", "r4" /*modified*/
 			);
-
+    a = save_a;
+    b = save_b;
 	return ret;
 }
 

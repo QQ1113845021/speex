@@ -47,6 +47,18 @@
 #include "vq_bfin.h"
 #endif
 
+#ifdef __ARM_NEON__
+#ifndef SHORTCUTS
+//#error FAIL shortcut
+#endif
+#ifndef ARM5E_ASM
+//#error FAIL arm5e
+#endif
+#if !defined(OVERRIDE_VQ_NBEST)
+//#error FAIL override
+#endif
+#endif
+
 #ifndef DISABLE_ENCODER
 int scal_quant(spx_word16_t in, const spx_word16_t *boundary, int entries)
 {
@@ -129,6 +141,11 @@ void vq_nbest_sign(spx_word16_t *in, const spx_word16_t *codebook, int len, int 
 #else
       dist = ADD32(dist,.5f*E[i]);
 #endif
+       
+       if (entries > 200) {
+           spx_word32_t* p = 0;
+           *p = 12;
+       }
       if (i<N || dist<best_dist[N-1])
       {
          for (k=N-1; (k >= 1) && (k > used || dist < best_dist[k-1]); k--)
