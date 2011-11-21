@@ -102,11 +102,4 @@ inline spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const s
 	
 	return vget_lane_s32 (tmp,0);
 }
-#else
-inline spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
-	return -1;
-}
-inline spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac) {
-	return -1;
-}
 #endif
