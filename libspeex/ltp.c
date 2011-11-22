@@ -52,9 +52,8 @@
 #include "ltp_sse.h"
 #elif defined(ARMV7NEON_ASM)
 #include "resample_neon.h"
-//#include "ltp_arm4.h"
 #elif defined (ARM4_ASM) || defined(ARM5E_ASM)
-#include "ltp_arm4.h"
+// buggy ! #include "ltp_arm4.h"
 #elif defined (BFIN_ASM)
 #include "ltp_bfin.h"
 #endif
