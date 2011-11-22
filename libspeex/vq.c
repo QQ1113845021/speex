@@ -41,22 +41,10 @@
 #ifdef _USE_SSE
 #include <xmmintrin.h>
 #include "vq_sse.h"
-#elif 1 //defined(SHORTCUTS) && (defined(ARM4_ASM) || defined(ARM5E_ASM))
+#elif defined(SHORTCUTS) && (defined(ARM4_ASM) || defined(ARM5E_ASM))
 #include "vq_arm4.h"
 #elif defined(BFIN_ASM)
 #include "vq_bfin.h"
-#endif
-
-#ifdef __ARM_NEON__
-#ifndef SHORTCUTS
-//#error FAIL shortcut
-#endif
-#ifndef ARM5E_ASM
-//#error FAIL arm5e
-#endif
-#if !defined(OVERRIDE_VQ_NBEST)
-//#error FAIL override
-#endif
 #endif
 
 #ifndef DISABLE_ENCODER

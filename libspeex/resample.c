@@ -100,7 +100,6 @@ static void speex_free (void *ptr) {free(ptr);}
 #endif
 
 #ifdef ARMV7NEON_ASM
-#error pouet
 #include "resample_neon.h"
 #endif
 

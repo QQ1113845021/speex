@@ -50,10 +50,10 @@
 
 #ifdef _USE_SSE
 #include "ltp_sse.h"
-#elif 1 // defined(ARMV7NEON_ASM)
+#elif defined(ARMV7NEON_ASM)
 #include "resample_neon.h"
+//#include "ltp_arm4.h"
 #elif defined (ARM4_ASM) || defined(ARM5E_ASM)
-/* warning: crash on ios platform - explicit register saving/restore may help ? */
 #include "ltp_arm4.h"
 #elif defined (BFIN_ASM)
 #include "ltp_bfin.h"

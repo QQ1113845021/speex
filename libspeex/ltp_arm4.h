@@ -32,6 +32,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef OVERRIDE_INNER_PROD
 #define OVERRIDE_INNER_PROD
 spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
 {
@@ -82,9 +83,8 @@ spx_word32_t inner_prod(const spx_word16_t *x, const spx_word16_t *y, int len)
                         );
    return (sum1+sum2)>>1;
 }
+#endif
 
-#if 0
-#warning NOT USING ARMV4 PITH_XCORR 
 #define OVERRIDE_PITCH_XCORR
 void pitch_xcorr(const spx_word16_t *_x, const spx_word16_t *_y, spx_word32_t *corr, int len, int nb_pitch, char *stack)
 {
@@ -186,4 +186,3 @@ void pitch_xcorr(const spx_word16_t *_x, const spx_word16_t *_y, spx_word32_t *c
    }
 
 }
-#endif

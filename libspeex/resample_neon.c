@@ -52,11 +52,13 @@
 
 spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
-    const spx_int16_t* save_a = a;
-    const spx_int16_t* save_b = b;
+    const spx_int16_t* tmp_a;
+    const spx_int16_t* tmp_b;
 	__asm  (
 			/* save len */
 			"mov r4, %3  \n\t"
+			"mov %1, %4 \n\t"
+			"mov %2, %5 \n\t"
 			/* clear q0 */
 			"vmov.i16 q0, #0 \n\t"
 			/* load 8 values from a in q1*/
@@ -76,12 +78,12 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
             "vqadd.s64 d0, d0, d1 \n\t"
 			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
-			: "=r"(ret), "+r"(a), "+r"(b)/* out */
-			: "r"(len)/*in*/
+			: "=r"(ret), "+r"(tmp_a), "+r"(tmp_b)/* out */
+			: "r"(len), "r"(a), "r"(b) /*in*/
 			: "q0", "q1", "q2", "r4" /*modified*/
 			);
-    a = save_a;
-    b = save_b;
+    //a = save_a;
+    //b = save_b;
 	return ret;
 }
 
