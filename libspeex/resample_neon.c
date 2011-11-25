@@ -54,6 +54,13 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
 	spx_int32_t ret;
     const spx_int16_t* tmp_a;
     const spx_int16_t* tmp_b;
+    /* '&' constraint must be used for tmp_a/tmp_b otherwise compiler may be tempted 
+     to share some registers between tmp_a/tmp_b and a/b, hence generating this code 
+     for the initial mov:
+        mov r4, r5 
+        mov r1, r0
+        mov r2, r1 <- error
+     */
 	__asm  (
 			/* save len */
 			"mov r4, %3  \n\t"
@@ -78,7 +85,7 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
             "vqadd.s64 d0, d0, d1 \n\t"
 			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
-			: "=r"(ret), "+r"(tmp_a), "+r"(tmp_b)/* out */
+			: "=r"(ret), "=&r"(tmp_a), "=&r"(tmp_b)/* out */
 			: "r"(len), "r"(a), "r"(b) /*in*/
 			: "q0", "q1", "q2", "r4" /*modified*/
 			);
@@ -117,7 +124,7 @@ spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsig
             "vqadd.s64 d0, d0, d1 \n\t"
 			/* store result in ret as 32b */
 			"vmov.32 %0, d0[0] \n\t"
-			: "=r"(ret), "+r"(a), "+r"(b)/* out */
+			: "=r"(ret), "=&r"(a), "=&r"(b)/* out */
 			: "r"(len)/*in*/
 			: "q0", "q1", "q2", "r4" /*modified*/
 			);
