@@ -93,7 +93,7 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
 }
 
 /* same version with normalization at the end */
-spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+EXPORT spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
     const spx_int16_t* tmp_a;
     const spx_int16_t* tmp_b;
