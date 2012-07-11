@@ -54,26 +54,7 @@ static inline spx_int32_t inner_product_single(const spx_int16_t *a, const spx_i
 }
 
 #define OVERRIDE_INNER_PROD
-spx_int32_t inner_prod(const spx_int16_t *x, const spx_int16_t *y, int len){
-	spx_int32_t ret;
-
-	if (!(libspeex_cpu_features & SPEEX_LIB_CPU_FEATURE_NEON)) {
-		spx_word32_t sum=0;
-		len >>= 2;
-		while(len--) { 
-			spx_word32_t part=0;
-			part = MAC16_16(part,*x++,*y++);
-			part = MAC16_16(part,*x++,*y++);
-			part = MAC16_16(part,*x++,*y++);
-			part = MAC16_16(part,*x++,*y++);
-			/* HINT: If you had a 40-bit accumulator, you could shift only at the end */
-			sum = ADD32(sum,SHR32(part,6));
-		}
-		return sum;
-	} else {
-		return inner_product_neon(x, y, len);
-	}
-}
+spx_int32_t inner_prod(const spx_int16_t *x, const spx_int16_t *y, int len);
 
 #define OVERRIDE_INTERPOLATE_PRODUCT_SINGLE
 static inline spx_int32_t interpolate_product_single(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac){
