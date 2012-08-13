@@ -158,7 +158,8 @@ spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int1
 	
 	return vget_lane_s32 (tmp,0);
 }
-spx_int32_t inner_prod(const spx_int16_t *x, const spx_int16_t *y, int len){
+
+EXPORT spx_int32_t inner_prod(const spx_int16_t *x, const spx_int16_t *y, int len){
 	spx_int32_t ret;
 
 	if (!(libspeex_cpu_features & SPEEX_LIB_CPU_FEATURE_NEON)) {
