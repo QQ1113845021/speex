@@ -50,6 +50,7 @@
 #include <arm_neon.h>
 #include "resample_neon.h"
 
+#ifndef ARMV7NEON_ASM_FOR_WP
 spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
     const spx_int16_t* tmp_a;
@@ -91,8 +92,10 @@ spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b
 			);
 	return ret;
 }
+#endif
 
 /* same version with normalization at the end */
+#ifndef ARMV7NEON_ASM_FOR_WP
 EXPORT spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
 	spx_int32_t ret;
     const spx_int16_t* tmp_a;
@@ -136,12 +139,14 @@ EXPORT spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b
 			);
 	return ret;
 }
+#endif
 
 spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac){
 	int i,j;
 	int32x4_t sum = vdupq_n_s32 (0);
 	int16x4_t f=vld1_s16 ((const int16_t*)frac);
 	int32x4_t f2=vmovl_s16(f);
+	int32x2_t tmp;
 	
 	f2=vshlq_n_s32(f2,16);
 
@@ -153,7 +158,7 @@ spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int1
 	sum=vqdmulhq_s32(f2,sum);
 	sum=vshrq_n_s32(sum,1);
 	
-	int32x2_t tmp=vadd_s32(vget_low_s32(sum),vget_high_s32(sum));
+	tmp=vadd_s32(vget_low_s32(sum),vget_high_s32(sum));
 	tmp=vpadd_s32(tmp,tmp);
 	
 	return vget_lane_s32 (tmp,0);

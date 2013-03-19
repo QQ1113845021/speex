@@ -41,7 +41,7 @@
 #include "os_support.h"
 
 
-#ifdef ARMV7NEON_ASM
+#if defined(ARMV7NEON_ASM) || defined(ARMV7NEON_ASM_FOR_WP)
 EXPORT int libspeex_cpu_features=SPEEX_LIB_CPU_FEATURE_NEON;
 #else
 EXPORT int libspeex_cpu_features=0;

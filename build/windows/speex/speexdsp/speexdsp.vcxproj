@@ -117,7 +117,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(ProjectDir)..\..\..\..\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_WINDLL;_USRDLL;_DEBUG;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H;FIXED_POINT;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;_WINDLL;_USRDLL;_DEBUG;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H;FIXED_POINT;__ARM_NEON__;ARMV7NEON_ASM_FOR_WP;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -141,7 +141,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\include;$(ProjectDir)..\..\..\..\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_WINDLL;_USRDLL;NDEBUG;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H;FIXED_POINT;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32;_WINDLL;_USRDLL;NDEBUG;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H;FIXED_POINT;__ARM_NEON__;ARMV7NEON_ASM_FOR_WP;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -172,7 +172,12 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='ARM'">
+    <CustomBuild Include="..\..\..\..\libspeex\resample_neon_wp.asm">
+      <Command>armasm -o $(IntDir)resample_neon_wp.obj $(ProjectDir)..\..\..\..\libspeex\resample_neon_wp.asm</Command>
+      <Message>Compile assembler file</Message>
+      <Outputs>$(IntDir)resample_neon_wp.obj</Outputs>
+    </CustomBuild>
     <None Include="speexdsp.def" />
   </ItemGroup>
   <ItemGroup>
@@ -185,8 +190,10 @@
     <ClCompile Include="..\..\..\..\libspeex\mdf.c" />
     <ClCompile Include="..\..\..\..\libspeex\preprocess.c" />
     <ClCompile Include="..\..\..\..\libspeex\resample.c" />
+    <ClCompile Include="..\..\..\..\libspeex\resample_neon.c" />
     <ClCompile Include="..\..\..\..\libspeex\scal.c" />
     <ClCompile Include="..\..\..\..\libspeex\smallft.c" />
+    <ClCompile Include="..\..\..\..\libspeex\speexdsp.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\include\speex\speex.h" />
