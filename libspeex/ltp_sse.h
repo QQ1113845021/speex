@@ -54,7 +54,7 @@ float inner_prod(const float *a, const float *b, int len)
 }
 
 #define OVERRIDE_PITCH_XCORR
-void pitch_xcorr(const float *_x, const float *_y, float *corr, int len, int nb_pitch, char *stack)
+static void pitch_xcorr(const float *_x, const float *_y, float *corr, int len, int nb_pitch, char *stack)
 {
    int i, offset;
    VARDECL(__m128 *x);
