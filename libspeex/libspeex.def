@@ -16,7 +16,6 @@ speex_decode
 speex_decode_int
 speex_decoder_ctl
 speex_mode_query
-speex_lib_ctl
 speex_lib_get_mode
 
 ;
@@ -54,14 +53,6 @@ speex_std_low_mode_request_handler
 speex_std_vbr_request_handler
 speex_std_enh_request_handler
 speex_std_vbr_quality_request_handler
-
-;
-;   speex_echo.h
-;
-speex_echo_state_blob_new_from_memory
-speex_echo_state_blob_free
-speex_echo_state_blob_get_size
-speex_echo_state_blob_get_data
 
 ;
 ;	speex_header.h

@@ -3,6 +3,11 @@ EXPORTS
 
 
 ;
+;	speex.h
+;
+speex_lib_ctl
+
+;
 ;	speex_buffer.h
 ;
 speex_buffer_init
@@ -14,8 +19,12 @@ speex_buffer_get_available
 speex_buffer_resize
 
 ;
-;	speex_echo.h
+;   speex_echo.h
 ;
+speex_echo_state_blob_new_from_memory
+speex_echo_state_blob_free
+speex_echo_state_blob_get_size
+speex_echo_state_blob_get_data
 speex_echo_state_init
 speex_echo_state_init_mc
 speex_echo_state_destroy
