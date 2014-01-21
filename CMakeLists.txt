@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(LIBSPEEX C)
+project(SPEEX C)
 
 include_directories(include)
 
@@ -9,7 +9,3 @@ endif()
 
 add_subdirectory(include)
 add_subdirectory(libspeex)
-
-if(INSTALL_COMPONENT_IN_POSTBUILD)
-	add_install_target(INSTALL_libspeex COMP_libspeex "libspeex libspeexdsp")
-endif()
