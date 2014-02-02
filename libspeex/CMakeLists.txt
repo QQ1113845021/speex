@@ -1,5 +1,34 @@
+############################################################################
+# CMakeLists.txt
+# Copyright (C) 2014  Belledonne Communications, Grenoble France
+#
+############################################################################
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+############################################################################
+
 if(WIN32)
-set(LIBS ws2_32)
+	set(SHARED_LIB_INSTALL_DIR bin)
+else(WIN32)
+	set(SHARED_LIB_INSTALL_DIR lib)
+endif(WIN32)
+set(STATIC_LIB_INSTALL_DIR lib)
+
+if(WIN32)
+	set(LIBS ws2_32)
 endif(WIN32)
 
 set(LIBSPEEX_SOURCE_FILES
@@ -41,35 +70,40 @@ set(LIBSPEEX_SOURCE_FILES
 	kiss_fftr.h
 )
 
-add_definitions(
-	-DHAVE_CONFIG_H
-)
-
-if(WIN32)
+if(MSVC)
 set(LIBSPEEX_SOURCE_FILES
 	${LIBSPEEX_SOURCE_FILES}
-	../win32/config.h
 	libspeex.def
 )
-endif(WIN32)
+endif(MSVC)
 
-add_library(speex SHARED ${LIBSPEEX_SOURCE_FILES})
-set_target_properties(speex PROPERTIES VERSION 1.2 SOVERSION 6)
+if(${ENABLE_STATIC})
+	add_library(speex-static STATIC ${LIBSPEEX_SOURCE_FILES})
+	set_target_properties(speex-static PROPERTIES OUTPUT_NAME speex)
+	target_link_libraries(speex-static ${LIBS})
+	install(TARGETS speex-static
+		DESTINATION ${STATIC_LIB_INSTALL_DIR}
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif(${ENABLE_STATIC})
+if(${ENABLE_SHARED})
+	add_library(speex SHARED ${LIBSPEEX_SOURCE_FILES})
+	set_target_properties(speex PROPERTIES VERSION 1.2 SOVERSION 6)
+	target_link_libraries(speex ${LIBS})
+	install(TARGETS speex
+		DESTINATION ${SHARED_LIB_INSTALL_DIR}
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif(${ENABLE_SHARED})
 
-target_link_libraries(speex ${LIBS})
-
-install(TARGETS speex
-	DESTINATION ${LIB_INSTALL_DIR}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-if(WIN32)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/speex.pdb
-	DESTINATION ${LIB_INSTALL_DIR}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-endif()
-endif(WIN32)
+if(MSVC)
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/speex.pdb
+			DESTINATION ${LIB_INSTALL_DIR}
+			PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)
+	endif()
+endif(MSVC)
 
 
 
@@ -92,28 +126,37 @@ set(LIBSPEEXDSP_SOURCE_FILES
 	kiss_fftr.h
 )
 
-if(WIN32)
+if(MSVC)
 set(LIBSPEEXDSP_SOURCE_FILES
 	${LIBSPEEXDSP_SOURCE_FILES}
-	../win32/config.h
 	libspeexdsp.def
 )
-endif(WIN32)
+endif(MSVC)
 
-add_library(speexdsp SHARED ${LIBSPEEXDSP_SOURCE_FILES})
-set_target_properties(speexdsp PROPERTIES VERSION 1.2 SOVERSION 6)
+if(${ENABLE_STATIC})
+	add_library(speexdsp-static STATIC ${LIBSPEEXDSP_SOURCE_FILES})
+	set_target_properties(speexdsp-static PROPERTIES OUTPUT_NAME speexdsp)
+	target_link_libraries(speexdsp-static ${LIBS})
+	install(TARGETS speexdsp-static
+		DESTINATION ${STATIC_LIB_INSTALL_DIR}
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif(${ENABLE_STATIC})
+if(${ENABLE_SHARED})
+	add_library(speexdsp SHARED ${LIBSPEEXDSP_SOURCE_FILES})
+	set_target_properties(speexdsp PROPERTIES VERSION 1.2 SOVERSION 6)
+	target_link_libraries(speexdsp ${LIBS})
+	install(TARGETS speexdsp
+		DESTINATION ${SHARED_LIB_INSTALL_DIR}
+		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif(${ENABLE_SHARED})
 
-target_link_libraries(speexdsp ${LIBS})
-
-install(TARGETS speexdsp
-	DESTINATION ${LIB_INSTALL_DIR}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-if(WIN32)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/speexdsp.pdb
-	DESTINATION ${LIB_INSTALL_DIR}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-)
-endif()
-endif(WIN32)
+if(MSVC)
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/speexdsp.pdb
+			DESTINATION ${LIB_INSTALL_DIR}
+			PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+		)
+	endif()
+endif(MSVC)
