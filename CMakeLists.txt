@@ -44,8 +44,7 @@ option(ENABLE_FIXED_POINT_DEBUG "Debug fixed-point implementation" OFF)
 option(ENABLE_TI_C55X "Enable support for TI C55X DSP" OFF)
 option(ENABLE_VORBIS_PSY "Enable the Vorbis psy model" OFF)
 set(WITH_FFT "" CACHE STRING "Use an alternate FFT implementation. The available choices are kiss (default fixed point) and smallft (default floating point)")
-option(ENABLE_SHARED "Build shared library." ON)
-option(ENABLE_STATIC "Build static library." ON)
+option(ENABLE_STATIC "Build static library (default is shared library)." OFF)
 
 
 include(CheckIncludeFile)
