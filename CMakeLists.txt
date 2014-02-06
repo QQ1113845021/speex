@@ -221,6 +221,9 @@ endforeach(KEYWORD)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/speex/speex_config_types.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/speex/speex_config_types.h)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speex/speex_config_types.h
+        DESTINATION include/speex
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
