@@ -39,3 +39,4 @@ src/speexdec
 src/speexenc
 stamp-*
 patches
+compile
