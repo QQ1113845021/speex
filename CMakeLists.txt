@@ -229,6 +229,15 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speex/speex_config_types.h
         PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
 
 
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix ${prefix}/bin)
+set(libdir ${prefix}/lib)
+set(includedir ${prefix}/include)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speex.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speex.pc)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speexdsp.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speex.pc ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc DESTINATION lib/pkgconfig)		
+
+
 add_definitions(-DHAVE_CONFIG_H)
 
 include_directories(
