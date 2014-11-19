@@ -50,96 +50,57 @@
 #include <arm_neon.h>
 #include "resample_neon.h"
 
-#ifndef ARMV7NEON_ASM_FOR_WP
-spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
-	spx_int32_t ret;
-    const spx_int16_t* tmp_a;
-    const spx_int16_t* tmp_b;
-    /* '&' constraint must be used for tmp_a/tmp_b otherwise compiler may be tempted 
-     to share some registers between tmp_a/tmp_b and a/b, hence generating this code 
-     for the initial mov:
-        mov r4, r5 
-        mov r1, r0
-        mov r2, r1 <- error
-     */
-	__asm  (
-			/* save len */
-			"mov r4, %3  \n\t"
-			"mov %1, %4 \n\t"
-			"mov %2, %5 \n\t"
-			/* clear q0 */
-			"vmov.i16 q0, #0 \n\t"
-			/* load 8 values from a in q1*/
-			"1: vld1.16 {d2,d3},[%1]! \n\t"
-			/* load 8 values from b in q2 */
-			"vld1.16 {d4,d5},[%2]! \n\t"
-			/* multiply-add 4 first values (16b) into q0 (32b)*/
-			"vmlal.s16 q0, d2, d4 \n\t"
-			/* multiply-add 4 last values (16b) into q0 (32b) */
-			"vmlal.s16 q0, d3, d5 \n\t"
-			/* decrement len by 8 */
-			"subs r4, r4, #8 \n\t"
-			/* loop if needed */
-            "bne 1b \n\t"
-			/* add individual 32b results, store in 64b*/
-			"vpaddl.s32 q0, q0\n\t"
-            "vqadd.s64 d0, d0, d1 \n\t"
-			/* store result in ret as 32b */
-			"vmov.32 %0, d0[0] \n\t"
-			: "=r"(ret), "=&r"(tmp_a), "=&r"(tmp_b)/* out */
-			: "r"(len), "r"(a), "r"(b) /*in*/
-			: "q0", "q1", "q2", "r4" /*modified*/
-			);
-	return ret;
-}
-#endif
 
-/* same version with normalization at the end */
-#ifndef ARMV7NEON_ASM_FOR_WP
-EXPORT spx_int32_t inner_product_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
-	spx_int32_t ret;
-    const spx_int16_t* tmp_a;
-    const spx_int16_t* tmp_b;
-    /* '&' constraint must be used for tmp_a/tmp_b otherwise compiler may be tempted 
-     to share some registers between tmp_a/tmp_b and a/b, hence generating this code 
-     for the initial mov:
-     mov r4, r5 
-     mov r1, r0
-     mov r2, r1 <- error
-     */
-	__asm  (
-			/* save len */
-			"mov r4, %3  \n\t"
-			"mov %1, %4 \n\t"
-			"mov %2, %5 \n\t"
-			/* clear q0 */
-			"vmov.i16 q0, #0 \n\t"
-			/* load 8 values from a in q1*/
-			"1: vld1.16 {d2,d3},[%1]! \n\t"
-			/* load 8 values from b in q2 */
-			"vld1.16 {d4,d5},[%2]! \n\t"
-			/* multiply-add 4 first values (16b) into q0 (32b)*/
-			"vmlal.s16 q0, d2, d4 \n\t"
-			/* multiply-add 4 last values (16b) into q0 (32b) */
-			"vmlal.s16 q0, d3, d5 \n\t"
-			/* decrement len by 8 */
-			"subs r4, r4, #8 \n\t"
-			/* loop if needed */
-            "bne 1b \n\t"
-			/* add individual 32b results, store in 64b*/
-			"vpaddl.s32 q0, q0\n\t"
-			/* right shit >> 6 */
-			"vshr.s64 q0, q0, #6 \n\t"
-            "vqadd.s64 d0, d0, d1 \n\t"
-			/* store result in ret as 32b */
-			"vmov.32 %0, d0[0] \n\t"
-			: "=r"(ret), "=&r"(tmp_a), "=&r"(tmp_b)/* out */
-			: "r"(len), "r"(a), "r"(b) /*in*/
-			: "q0", "q1", "q2", "r4" /*modified*/
-			);
-	return ret;
+/* intrinsics */
+static inline spx_int32_t inner_product_single_neon_intrinsics(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+    int16x8_t a8;
+    int16x8_t b8;
+    spx_int32_t sum = 0; // sum is 0
+    int32x4_t partial = vdupq_n_s32(0);
+    int64x2_t back;
+
+    len >>=3;
+
+    while (len--) {
+        a8 = vld1q_s16(a); // load 8 16b from a
+        b8 = vld1q_s16(b); // load 8 16b from b
+
+        partial = vmlal_s16(partial, vget_low_s16(a8), vget_low_s16(b8)); // part[n] += a[n] * b[n] vector multiply and add
+        partial = vmlal_s16(partial, vget_high_s16(a8), vget_high_s16(b8)); // part[n] += a[n] * b[n] vector multiply and add
+        a+=8; b+=8;
+    }
+    back = vpaddlq_s32(partial); // sum the 4 s32 in 2 64b
+
+    return vgetq_lane_s64(back, 0) + vgetq_lane_s64(back, 1);
 }
-#endif
+
+/* intrinsics */
+spx_int32_t inner_product_neon_intrinsics(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+    int16x8_t a8;
+    int16x8_t b8;
+    spx_int32_t sum = 0; // sum is 0
+    int32x4_t partial = vdupq_n_s32(0);
+    int64x2_t back;
+
+    len >>=3;
+
+    while (len--) {
+        a8 = vld1q_s16(a); // load 8 16b from a
+        b8 = vld1q_s16(b); // load 8 16b from b
+
+        partial = vmlal_s16(partial, vget_low_s16(a8), vget_low_s16(b8)); // part[n] += a[n] * b[n] vector multiply and add
+        partial = vmlal_s16(partial, vget_high_s16(a8), vget_high_s16(b8)); // part[n] += a[n] * b[n] vector multiply and add
+        a+=8; b+=8;
+    }
+    back = vpaddlq_s32(partial); // sum the 4 s32 in 2 64b
+    back = vshrq_n_s64(back, 6); // shift by 6
+
+    return vgetq_lane_s64(back, 0) + vgetq_lane_s64(back, 1);
+}
+
+spx_int32_t inner_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len){
+	return inner_product_single_neon_intrinsics(a,b,len);
+}
 
 spx_int32_t interpolate_product_single_neon(const spx_int16_t *a, const spx_int16_t *b, unsigned int len, const spx_uint32_t oversample, spx_int16_t *frac){
 	int i,j;
@@ -181,9 +142,9 @@ EXPORT spx_int32_t inner_prod(const spx_int16_t *x, const spx_int16_t *y, int le
 		}
 		return sum;
 	} else {
-		return inner_product_neon(x, y, len);
+		return inner_product_neon_intrinsics(x, y, len);
 	}
 }
-#endif
+#endif /* ARM NEON */
 
 
