@@ -53,7 +53,7 @@
 #error SSE is only for floating-point
 #endif
 
-#if defined(ARMV7NEON_ASM) && !defined(ARM5E_ASM)
+#if defined(ARMV7NEON_ASM) && !defined(ARM5E_ASM) && !defined(__arm64__)
 #define ARM5E_ASM 1
 #endif
 
