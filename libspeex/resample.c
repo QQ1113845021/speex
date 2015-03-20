@@ -99,7 +99,7 @@ static void speex_free (void *ptr) {free(ptr);}
 #include "resample_sse.h"
 #endif
 
-#if defined(ARMV7NEON_ASM) || defined(ARMV7NEON_ASM_FOR_WP)
+#ifdef ARMV7NEON_ASM
 #include "resample_neon.h"
 #endif
 

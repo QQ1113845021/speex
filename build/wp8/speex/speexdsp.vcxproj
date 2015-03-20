@@ -90,7 +90,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>FIXED_POINT;__ARM_NEON__;ARMV7NEON_ASM_FOR_WP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FIXED_POINT;__ARM_NEON__;ARMV7NEON_ASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -101,13 +101,6 @@
       <IsWinMDFile>true</IsWinMDFile>
       <Private>false</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(Platform)'=='ARM'">
-    <CustomBuild Include="..\..\..\libspeex\resample_neon_wp.asm">
-      <Command>armasm -o $(IntDir)resample_neon_wp.obj $(ProjectDir)..\..\..\libspeex\resample_neon_wp.asm</Command>
-      <Message>Compile assembler file</Message>
-      <Outputs>$(IntDir)resample_neon_wp.obj</Outputs>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="speexdsp.def" />
