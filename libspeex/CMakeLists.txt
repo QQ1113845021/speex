@@ -86,6 +86,7 @@ else()
 		endif()
 	endif()
 endif()
+target_compile_options(speex PRIVATE "-w")
 install(TARGETS speex
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION lib
