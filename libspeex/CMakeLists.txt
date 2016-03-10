@@ -116,10 +116,14 @@ set(LIBSPEEXDSP_SOURCE_FILES
 )
 
 if(MSVC)
-set(LIBSPEEXDSP_SOURCE_FILES
-	${LIBSPEEXDSP_SOURCE_FILES}
-	libspeexdsp.def
-)
+	set(LIBSPEEXDSP_SOURCE_FILES
+		${LIBSPEEXDSP_SOURCE_FILES}
+		libspeexdsp.def
+	)
+endif()
+
+if(ANDROID AND CMAKE_SYSTEM_PROCESSOR STREQUAL "armeabi-v7a")
+	set_source_files_properties(resample_neon.c PROPERTIES COMPILE_FLAGS "-mfpu=neon")
 endif()
 
 if(ENABLE_STATIC)
