@@ -31,6 +31,9 @@ set(SPEEX_EXTRA_VERSION " ")
 set(SPEEX_VERSION "1.2rc1")
 
 
+option(ENABLE_SPEEX_CODEC "Enable build of the speex codec library" ON)
+option(ENABLE_SPEEX_DSP "Enable build of the speexdsp library" ON)
+
 option(ENABLE_VALGRIND "Enable valgrind extra checks" OFF)
 option(ENABLE_SSE "Enable SSE support" OFF)
 option(ENABLE_FIXED_POINT "Compile as fixed-point" OFF)
@@ -220,9 +223,14 @@ set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${prefix}/bin)
 set(libdir ${prefix}/lib)
 set(includedir ${prefix}/include)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speex.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speex.pc)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speexdsp.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speex.pc ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc DESTINATION lib/pkgconfig)		
+if(ENABLE_SPEEX_CODEC)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speex.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speex.pc)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speex.pc DESTINATION lib/pkgconfig)
+endif()
+if(ENABLE_SPEEX_DSP)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/speexdsp.pc.in ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/speexdsp.pc DESTINATION lib/pkgconfig)
+endif()
 
 
 add_definitions(-DHAVE_CONFIG_H)
