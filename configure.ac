@@ -87,7 +87,7 @@ has_sse=yes
 has_sse=no
 ]
 )
-AC_MSG_RESULT($has_sse)  
+AC_MSG_RESULT($has_sse)
 
 SAVE_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden"
@@ -185,9 +185,15 @@ AC_ARG_ENABLE(arm5e-asm, [  --enable-arm5e-asm      Make use of ARM5E assembly o
   AC_DEFINE([ARM5E_ASM], , [Make use of ARM5E assembly optimizations])
 fi])
 
-AC_ARG_ENABLE(armv7neon-asm, [  --enable-armv7neon-asm      Make use of ARMV7a NEON assembly optimizations],
+# this was the old name for armneon-intrinsics option but we are keeping the old name for backward compatibility
+AC_ARG_ENABLE(armv7neon-asm, [  --enable-armv7neon-asm      Make use of NEON intrinsics optimizations],
 [if test "$enableval" = yes; then
-  AC_DEFINE([ARMV7NEON_ASM], , [Make use of ARM5E assembly optimizations])
+  AC_DEFINE([ARM_NEON_INTRINSICS], , [Make use of NEON intrinsics optimizations])
+  CFLAGS="$CFLAGS -marm -DSHORTCUTS"
+fi])
+AC_ARG_ENABLE(arm-neon-intrinsics, [  --enable-arm-neon-intrinsics      Make use of NEON intrinsics optimizations],
+[if test "$enableval" = yes; then
+  AC_DEFINE([ARM_NEON_INTRINSICS], , [Make use of NEON intrinsics optimizations])
   CFLAGS="$CFLAGS -marm -DSHORTCUTS"
 fi])
 
@@ -293,7 +299,7 @@ AC_DEFINE([_BUILD_SPEEX], [], [Defined only when Speex itself is build built])
 AC_OUTPUT([Makefile libspeex/Makefile src/Makefile doc/Makefile Speex.spec
            include/Makefile include/speex/Makefile speex.pc speexdsp.pc
            win32/Makefile win32/libspeex/Makefile win32/speexenc/Makefile
-           win32/speexdec/Makefile symbian/Makefile 
+           win32/speexdec/Makefile symbian/Makefile
            win32/VS2003/Makefile
            win32/VS2003/tests/Makefile
            win32/VS2003/libspeex/Makefile
@@ -312,11 +318,11 @@ AC_OUTPUT([Makefile libspeex/Makefile src/Makefile doc/Makefile Speex.spec
            win32/VS2008/tests/Makefile
            win32/VS2008/libspeex/Makefile
            win32/VS2008/speexenc/Makefile
-           include/speex/speex_config_types.h ti/Makefile 
+           include/speex/speex_config_types.h ti/Makefile
 	   ti/speex_C54_test/Makefile ti/speex_C55_test/Makefile
 	   ti/speex_C64_test/Makefile ])
 
-if test "x$src" = "x"; then 
+if test "x$src" = "x"; then
 echo "**IMPORTANT**"
 echo "You don't seem to have the development package for libogg (libogg-devel) installed. Only the Speex library (libspeex) will be built (no encoder/decoder executable)"
 echo "You can download libogg from http://downloads.xiph.org/releases/ogg/"

@@ -7,7 +7,7 @@
 #cmakedefine ENABLE_VALGRIND
 #cmakedefine ARM4_ASM
 #cmakedefine ARM5E_ASM
-#cmakedefine ARMV7NEON_ASM
+#cmakedefine ARM_NEON_INTRINSICS
 #cmakedefine BFIN_ASM
 #cmakedefine TI_C55X
 #cmakedefine DISABLE_FLOAT_API

@@ -7,18 +7,18 @@
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
-   
+
    - Redistributions of source code must retain the above copyright
    notice, this list of conditions and the following disclaimer.
-   
+
    - Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-   
+
    - Neither the name of the Xiph.org Foundation nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-   
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -53,7 +53,7 @@
 #error SSE is only for floating-point
 #endif
 
-#if defined(ARMV7NEON_ASM) && !defined(ARM5E_ASM) && !defined(__arm64__) && !defined(_M_ARM)
+#if defined(ARM_NEON_INTRINSICS) && !defined(ARM5E_ASM) && !defined(__arm64__) && !defined(_M_ARM)
 #define ARM5E_ASM 1
 #endif
 
@@ -69,11 +69,11 @@
 #ifndef FLOATING_POINT
 #error You now need to define either FIXED_POINT or FLOATING_POINT
 #endif
-#if defined (ARM4_ASM) || defined(ARM5E_ASM) || defined(BFIN_ASM) 
+#if defined (ARM4_ASM) || defined(ARM5E_ASM) || defined(BFIN_ASM)
 #error I suppose you can have a [ARM4/ARM5E/Blackfin] that has float instructions?
 #endif
-#ifdef ARMV7NEON_ASM
-#error Neon cannot be used in floating point mode. 
+#ifdef ARM_NEON_INTRINSICS
+#error Neon cannot be used in floating point mode.
 #endif
 #ifdef FIXED_POINT_DEBUG
 #error "Don't you think enabling fixed-point is a good thing to do if you want to debug that?"
@@ -129,7 +129,7 @@ typedef spx_word32_t spx_sig_t;
 
 #include "fixed_generic.h"
 
-#ifdef ARMV7NEON_ASM
+#ifdef ARM_NEON_INTRINSICS
 #include "fixed_neon.h"
 #endif
 
@@ -229,11 +229,11 @@ typedef float spx_word32_t;
 #if defined (CONFIG_TI_C54X) || defined (CONFIG_TI_C55X)
 
 /* 2 on TI C5x DSP */
-#define BYTES_PER_CHAR 2 
+#define BYTES_PER_CHAR 2
 #define BITS_PER_CHAR 16
 #define LOG2_BITS_PER_CHAR 4
 
-#else 
+#else
 
 #define BYTES_PER_CHAR 1
 #define BITS_PER_CHAR 8
